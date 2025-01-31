@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Address Map View</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px; /* Left sidebar, main content, right sidebar */
+            gap: 20px;
+            height: calc(100vh - 40px); /* Full height minus padding */
+        }
+        .left-sidebar {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .map-container {
+            height: 60%; /* Fixed height for the map */
+            /* border-radius: 5px; */
+            overflow: hidden;
+        }
+        .right-sidebar {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .below-map {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-sidebar">
+            <h3>Left Sidebar</h3>
+            <!-- Add your left sidebar content here -->
+            <p>Additional information can go here</p>
+        </div>
+
+        <div class="main-content">
+            <div class="map-container">
+                {{ map_html|safe }}
+            </div>
+            <div class="below-map">
+                <h3>How to interpret the map?</h3>
+                <p><span style="display: inline-block; width: 20px; height: 20px; background-color: rgb(202, 160, 35); margin-right: 10px; vertical-align: middle;"></span>The orange-ish selected area represents the portion of land registered at the Kadaster for the address.</p>
+                <p>You can zoom in and out using the <span style="display: inline-block; width: 20px; height: 20px; background-color: white; border: 1px solid #ccc; text-align: center; line-height: 20px; margin: 0 3px;">&#43;</span> and <span style="display: inline-block; width: 20px; height: 20px; background-color: white; border: 1px solid #ccc; text-align: center; line-height: 20px; margin: 0 3px;">&minus;</span> buttons on the map, or by using your mouse wheel.</p>
+            </div>
+        </div>
+
+        <div class="right-sidebar">
+            <h3>Right Sidebar</h3>
+            <!-- Add your right sidebar content here -->
+            <p>More information can go here</p>
+        </div>
+    </div>
+</body>
+</html>

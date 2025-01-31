@@ -8,6 +8,7 @@ from shapely.geometry import shape, mapping
 from functools import partial
 import json
 
+
 app = Flask(__name__)
 
 # PDOK WFS Endpoint
@@ -97,7 +98,7 @@ def address_map():
         transformer = pyproj.Transformer.from_crs("EPSG:28992", "EPSG:4326", always_xy=True)
         center_lon, center_lat = transformer.transform(x, y)
         
-        m = folium.Map(location=[center_lat, center_lon], zoom_start=18)
+        m = folium.Map(location=[center_lat, center_lon], zoom_start=15)
         
         # Add marker for the address
         folium.Marker(
@@ -137,7 +138,9 @@ def address_map():
             )
         ).add_to(m)
 
-        return m._repr_html_()
+        # Instead of returning m._repr_html_() directly, render the template
+        map_html = m._repr_html_()
+        return render_template('map_view.html', map_html=map_html)
 
     except Exception as e:
         print(f"Error processing data: {str(e)}")
