@@ -31,74 +31,9 @@ def get_wfs_data(bbox):
     else:
         return {"error": f"Failed to fetch data: {response.status_code}"}
 
-# # API Endpoint to fetch parcels by BBOX
-# @app.route("/get_parcels", methods=["GET"])
-# def get_parcels():
-#     bbox = request.args.get("bbox")
-#     if not bbox:
-#         return jsonify({"error": "Please provide a bounding box (minLon,minLat,maxLon,maxLat)"}), 400
-    
-#     data = get_wfs_data(bbox)
-#     return jsonify(data)
-
-
-
-# API to visualize parcels on a map
-@app.route("/map")
-def show_map():
-    try:
-        # Create a base map centered on Netherlands
-        m = folium.Map(location=[52.1326, 5.2913], zoom_start=8)
-
-        # Fetch data from PDOK WFS service
-        url = "https://service.pdok.nl/kadaster/kadastralekaart/wfs/v5_0"
-        params = {
-            "request": "GetFeature",
-            "service": "WFS",
-            "version": "1.1.0",
-            "outputFormat": "application/json",
-            "typeName": "kadastralekaart:Perceel"
-        }
-        
-        response = requests.get(url, params=params)
-        data = response.json()
-
-        # Create transformer using pyproj
-        transformer = pyproj.Transformer.from_crs("EPSG:28992", "EPSG:4326", always_xy=True)
-
-        # Convert the GeoJSON from EPSG:28992 to EPSG:4326
-        for feature in data['features']:
-            if feature['geometry']:
-                geom = shape(feature['geometry'])
-                # Transform coordinates
-                if geom.geom_type == 'Polygon':
-                    coords = list(geom.exterior.coords)
-                    transformed_coords = [transformer.transform(x, y) for x, y in coords]
-                    feature['geometry']['coordinates'] = [transformed_coords]
-                elif geom.geom_type == 'MultiPolygon':
-                    transformed_polys = []
-                    for poly in geom.geoms:
-                        coords = list(poly.exterior.coords)
-                        transformed_coords = [transformer.transform(x, y) for x, y in coords]
-                        transformed_polys.append([transformed_coords])
-                    feature['geometry']['coordinates'] = transformed_polys
-
-        # Add the parcels to the map
-        folium.GeoJson(
-            data,
-            style_function=lambda x: {
-                'fillColor': 'orange',
-                'color': 'black',
-                'weight': 1,
-                'fillOpacity': 0.5
-            }
-        ).add_to(m)
-
-        return m._repr_html_()
-
-    except Exception as e:
-        print(f"Error processing data: {str(e)}")
-        return f"Error processing data: {str(e)}", 500
+@app.route("/input")
+def input():
+    return render_template("input.html")
 
 @app.route("/address_map")
 def address_map():
