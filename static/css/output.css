@@ -572,11 +572,6 @@ h4 {
   font-size: 20px;
 }
 
-.mx-\[120px\] {
-  margin-left: 120px;
-  margin-right: 120px;
-}
-
 .mb-\[200px\] {
   margin-bottom: 200px;
 }
@@ -585,28 +580,20 @@ h4 {
   margin-bottom: 20px;
 }
 
+.mt-20 {
+  margin-top: 5rem;
+}
+
 .mt-\[100px\] {
   margin-top: 100px;
-}
-
-.mt-\[44px\] {
-  margin-top: 44px;
-}
-
-.mt-6 {
-  margin-top: 1.5rem;
 }
 
 .mt-\[110px\] {
   margin-top: 110px;
 }
 
-.mt-5 {
-  margin-top: 1.25rem;
-}
-
-.mt-20 {
-  margin-top: 5rem;
+.mt-\[44px\] {
+  margin-top: 44px;
 }
 
 .flex {
@@ -617,14 +604,6 @@ h4 {
   display: none;
 }
 
-.h-16 {
-  height: 4rem;
-}
-
-.h-32 {
-  height: 8rem;
-}
-
 .w-\[321px\] {
   width: 321px;
 }
@@ -633,12 +612,12 @@ h4 {
   width: 334px;
 }
 
-.w-\[675px\] {
-  width: 675px;
-}
-
 .w-\[626px\] {
   width: 626px;
+}
+
+.w-\[675px\] {
+  width: 675px;
 }
 
 .w-fit {
@@ -670,16 +649,12 @@ h4 {
   justify-content: space-between;
 }
 
-.gap-6 {
-  gap: 1.5rem;
-}
-
 .gap-3 {
   gap: 0.75rem;
 }
 
-.border-2 {
-  border-width: 2px;
+.gap-6 {
+  gap: 1.5rem;
 }
 
 .border-b-2 {
@@ -698,11 +673,6 @@ h4 {
 
 .bg-transparent {
   background-color: transparent;
-}
-
-.bg-\[\#1a2128\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(26 33 40 / var(--tw-bg-opacity, 1));
 }
 
 .p-1 {
