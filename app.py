@@ -62,33 +62,78 @@ def address_map():
         location = geocode_data['response']['docs'][0]
         centroid = location['centroide_rd']
         
-        # Extract X and Y coordinates from centroid string (format: 'POINT(X Y)')
+        # Extract coordinates first as we need them in both cases
         x, y = map(float, centroid.replace('POINT(', '').replace(')', '').split())
-                
-        # Create a small buffer around the point (100 meters)
-        buffer = 100
+        
+        # Get the cadastral identifier if available
+        cadastral_id = None
+        if location.get('gekoppeld_perceel'):
+            cadastral_id = location['gekoppeld_perceel'][0]  # Get the first linked parcel
+            print(f"Found gekoppeld_perceel: {cadastral_id}")
+        else:
+            print("No gekoppeld_perceel found in location data")
+        
+        # Fetch parcels using WFS with bbox
+        wfs_url = "https://service.pdok.nl/kadaster/kadastralekaart/wfs/v5_0"
+        buffer = 50
         bbox = f"{x-buffer},{y-buffer},{x+buffer},{y+buffer}"
         
-        # Fetch parcels using WFS
-        wfs_url = "https://service.pdok.nl/kadaster/kadastralekaart/wfs/v5_0"
         wfs_params = {
             "request": "GetFeature",
             "service": "WFS",
             "version": "2.0.0",
             "outputFormat": "application/json",
             "typeName": "kadastralekaart:perceel",
-            "bbox": bbox,
             "srsName": "EPSG:28992",
-            "count": 1
+            "bbox": bbox
         }
         
         print("WFS request params:", wfs_params)
-        print("Bounding box:", bbox)
         response = requests.get(wfs_url, params=wfs_params)
-        data = response.json()
         
-        if data.get('features'):
-            print("First feature example:", json.dumps(data['features'][0], indent=2))
+        # Add debug information
+        print("Response status code:", response.status_code)
+        print("Response content:", response.text[:500])
+        
+        try:
+            data = response.json()
+            if data.get('features'):
+                print(f"Number of features found: {len(data['features'])}")
+                
+                # If we have a cadastral ID, filter the features
+                if cadastral_id:
+                    parts = cadastral_id.split('-')
+                    if len(parts) == 3:
+                        gemeente_code = parts[0]  # ASD21
+                        sectie = parts[1]         # Y
+                        perceelnummer = int(parts[2])  # 3930
+                        
+                        filtered_features = [
+                            feature for feature in data['features']
+                            if (feature['properties'].get('AKRKadastraleGemeenteCodeWaarde') == gemeente_code and
+                                feature['properties'].get('sectie') == sectie and
+                                feature['properties'].get('perceelnummer') == perceelnummer)
+                        ]
+                        
+                        if filtered_features:
+                            data['features'] = filtered_features
+                            print(f"Found matching parcel: {cadastral_id}")
+                        else:
+                            print(f"No matching parcel found for {cadastral_id}")
+                            print("Available features:", [
+                                (f['properties'].get('AKRKadastraleGemeenteCodeWaarde'),
+                                 f['properties'].get('sectie'),
+                                 f['properties'].get('perceelnummer'))
+                                for f in data['features']
+                            ])
+            else:
+                print("No features found in the response")
+                return "No parcels found for this address", 404
+
+        except json.JSONDecodeError as e:
+            print(f"Failed to parse JSON response: {str(e)}")
+            print("Full response:", response.text)
+            return "Error processing WFS response", 500
 
         # Before transforming coordinates, send geometry data to your API
         biodiversity_data = {}  # This will store your API response
