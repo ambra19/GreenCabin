@@ -22,7 +22,6 @@ def address_map():
             address = request.form.get('address')
             if not address:
                 return "Please provide an address", 400
-            # Redirect to GET with address as query parameter
             return redirect(url_for('address_map', address=address))
         
         # Handle GET request
@@ -49,10 +48,8 @@ def address_map():
         location = geocode_data['response']['docs'][0]
         centroid = location['centroide_rd']
         
-        # Extract coordinates first as we need them in both cases
         x, y = map(float, centroid.replace('POINT(', '').replace(')', '').split())
         
-        # Get the cadastral identifier if available
         cadastral_id = None
         if location.get('gekoppeld_perceel'):
             cadastral_id = location['gekoppeld_perceel'][0]  # Get the first linked parcel
@@ -78,9 +75,6 @@ def address_map():
         print("WFS request params:", wfs_params)
         response = requests.get(wfs_url, params=wfs_params)
         
-        # # Add debug information
-        # print("Response status code:", response.status_code)
-        # print("Response content:", response.text[:500])
         
         try:
             data = response.json()
@@ -124,7 +118,7 @@ def address_map():
         
 
         # Before transforming coordinates, send geometry data to your API
-        biodiversity_data = {}  # This will store your API response
+        biodiversity_data = {}  
         try:
             # Prepare the geometry data for your API
             geometry_payload = {
