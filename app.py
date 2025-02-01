@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect, url_for
 import requests
 import geopandas as gpd
 import folium
@@ -37,12 +37,20 @@ app = Flask(__name__)
 def input():
     return render_template("input.html")
 
-@app.route("/address_map")
+@app.route("/address_map", methods=['GET','POST'])
 def address_map():
     try:
+        if request.method == 'POST':
+            address = request.form.get('address')
+            if not address:
+                return "Please provide an address", 400
+            # Redirect to GET with address as query parameter
+            return redirect(url_for('address_map', address=address))
+        
+        # Handle GET request
         address = request.args.get('address')
         if not address:
-            return "Please provide an address parameter", 400
+            return "Please provide an address", 400
         
         # First, geocode the address using PDOK Locatieserver
         geocode_url = "https://api.pdok.nl/bzk/locatieserver/search/v3_1/free"
@@ -135,6 +143,7 @@ def address_map():
             print(f"Failed to parse JSON response: {str(e)}")
             print("Full response:", response.text)
             return "Error processing WFS response", 500
+    
 
         # Before transforming coordinates, send geometry data to your API
         biodiversity_data = {}  # This will store your API response
