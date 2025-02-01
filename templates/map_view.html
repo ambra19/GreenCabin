@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Address Map View</title>
+    <title>Map View</title>
     <style>
         body {
             margin: 0;
@@ -42,7 +42,8 @@
         <div class="left-sidebar">
             <h3>Left Sidebar</h3>
             <!-- Add your left sidebar content here -->
-            <p>Index of biodiversity</p>
+            <p>Index of biodiversity: {{ biodiversity_data.score }} / 10</p>
+            <p>Credits: {{ biodiversity_data.credits }}</p>
             <p>Key insights of biodiversity in the selected area</p>
         </div>
 

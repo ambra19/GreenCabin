@@ -9,28 +9,29 @@ from functools import partial
 import json
 
 
+
 app = Flask(__name__)
 
-# PDOK WFS Endpoint
-WFS_URL = "https://service.pdok.nl/kadaster/kadastralekaart/wfs/v5_0"
+# # PDOK WFS Endpoint
+# WFS_URL = "https://service.pdok.nl/kadaster/kadastralekaart/wfs/v5_0"
 
-# Function to fetch cadastral parcels from WFS
-def get_wfs_data(bbox):
-    params = {
-        "service": "WFS",
-        "version": "2.0.0",
-        "request": "GetFeature",
-        "typeNames": "kadastralekaart:perceel",
-        "bbox": f"{bbox},EPSG:4326",
-        "outputFormat": "application/json"
-    }
+# # Function to fetch cadastral parcels from WFS
+# def get_wfs_data(bbox):
+#     params = {
+#         "service": "WFS",
+#         "version": "2.0.0",
+#         "request": "GetFeature",
+#         "typeNames": "kadastralekaart:perceel",
+#         "bbox": f"{bbox},EPSG:4326",
+#         "outputFormat": "application/json"
+#     }
 
-    response = requests.get(WFS_URL, params=params)
+#     response = requests.get(WFS_URL, params=params)
     
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return {"error": f"Failed to fetch data: {response.status_code}"}
+#     if response.status_code == 200:
+#         return response.json()
+#     else:
+#         return {"error": f"Failed to fetch data: {response.status_code}"}
 
 @app.route("/input")
 def input():
@@ -54,7 +55,7 @@ def address_map():
         geocode_response = requests.get(geocode_url, params=params)
         geocode_data = geocode_response.json()
         
-        print("Geocoding response:", json.dumps(geocode_data, indent=2))
+        # print("Geocoding response:", json.dumps(geocode_data, indent=2))
         
         if not geocode_data.get('response', {}).get('docs', []):
             return "Address not found", 404
@@ -91,9 +92,9 @@ def address_map():
         print("WFS request params:", wfs_params)
         response = requests.get(wfs_url, params=wfs_params)
         
-        # Add debug information
-        print("Response status code:", response.status_code)
-        print("Response content:", response.text[:500])
+        # # Add debug information
+        # print("Response status code:", response.status_code)
+        # print("Response content:", response.text[:500])
         
         try:
             data = response.json()
@@ -140,28 +141,26 @@ def address_map():
         try:
             # Prepare the geometry data for your API
             geometry_payload = {
-                # 'features': data['features']  # Or format this according to your API needs
                 'data': {
-                    'geometry': {
-                        'type': 'FeatureCollection',
-                        'features': data['features']
-                    }
+                    'geometry': data['features'][0]['geometry']  # This will be the Polygon with coordinates
                 }
             }
 
-            print("Geometry payload:", json.dumps(geometry_payload, indent=2))
+            print("Geometry payload sent to API:", json.dumps(geometry_payload, indent=2))
             
             # Make the API call to post the geometry data
             api_response = requests.post(
-                'YOUR_API_ENDPOINT',  
+                'https://api-biodiversity-395367171754.europe-west4.run.app/biodiversity',  
                 json=geometry_payload,
                 headers={'Content-Type': 'application/json'}
             )
             
             if api_response.status_code == 200:
                 biodiversity_data = api_response.json()
+                print(f"Biodiversity data received from API: {biodiversity_data}")
             else:
                 print(f"API call failed with status code: {api_response.status_code}")
+                print(f"API response content: {api_response.text}")
                 biodiversity_data = {"error": "Failed to fetch biodiversity data"}
         
         except Exception as api_error:
