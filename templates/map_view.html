@@ -55,13 +55,26 @@
             <p>Index of biodiversity: {{ biodiversity_data.score }} / 10</p>
             <p>Credits: {{ biodiversity_data.credits }}</p>
             <p>Key insights of biodiversity in the selected area</p>
+            <!-- Left Sidebar -->
+            <!-- <div class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg p-4"> -->
+                <!-- Layer Control -->
+                <!-- <div class="flex items-center space-x-2 p-3 hover:bg-gray-100 rounded-lg cursor-pointer"> -->
+                    <input type="checkbox" 
+                        id="biodiversityToggle" 
+                        {% if show_biodiversity %}checked{% endif %}
+                        class="w-4 h-4 text-green-600 rounded focus:ring-green-500">
+                    <label for="biodiversityToggle" 
+                        class="text-gray-700 font-medium select-none">
+                        Show Coverage Layer
+                    </label>
+                <!-- </div> -->
+                
+                <!-- You can add more sidebar content here -->
+            <!-- </div> -->
+
         </div>
 
         <div class="main-content">
-            <div class="layer-control">
-                <input type="checkbox" id="biodiversityToggle" {% if show_biodiversity %}checked{% endif %}>
-                <label for="biodiversityToggle">Show Biodiversity Layer</label>
-            </div>
             <div class="map-container">
                 {{ map_html|safe }}
             </div>
