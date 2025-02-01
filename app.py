@@ -43,8 +43,6 @@ def address_map():
         if not address:
             return "Please provide an address parameter", 400
         
-        print(f"Searching for address: {address}")
-
         # First, geocode the address using PDOK Locatieserver
         geocode_url = "https://api.pdok.nl/bzk/locatieserver/search/v3_1/free"
         params = {
@@ -66,9 +64,7 @@ def address_map():
         
         # Extract X and Y coordinates from centroid string (format: 'POINT(X Y)')
         x, y = map(float, centroid.replace('POINT(', '').replace(')', '').split())
-        
-        print(f"Found coordinates: x={x}, y={y}")
-        
+                
         # Create a small buffer around the point (100 meters)
         buffer = 100
         bbox = f"{x-buffer},{y-buffer},{x+buffer},{y+buffer}"
@@ -78,20 +74,54 @@ def address_map():
         wfs_params = {
             "request": "GetFeature",
             "service": "WFS",
-            "version": "1.1.0",
+            "version": "2.0.0",
             "outputFormat": "application/json",
-            "typeName": "kadastralekaart:Perceel",
+            "typeName": "kadastralekaart:perceel",
             "bbox": bbox,
-            "srsName": "EPSG:28992"
+            "srsName": "EPSG:28992",
+            "count": 1
         }
         
         print("WFS request params:", wfs_params)
+        print("Bounding box:", bbox)
         response = requests.get(wfs_url, params=wfs_params)
         data = response.json()
         
-        print("Number of features found:", len(data.get('features', [])))
         if data.get('features'):
             print("First feature example:", json.dumps(data['features'][0], indent=2))
+
+        # Before transforming coordinates, send geometry data to your API
+        biodiversity_data = {}  # This will store your API response
+        try:
+            # Prepare the geometry data for your API
+            geometry_payload = {
+                # 'features': data['features']  # Or format this according to your API needs
+                'data': {
+                    'geometry': {
+                        'type': 'FeatureCollection',
+                        'features': data['features']
+                    }
+                }
+            }
+
+            print("Geometry payload:", json.dumps(geometry_payload, indent=2))
+            
+            # Make the API call to post the geometry data
+            api_response = requests.post(
+                'YOUR_API_ENDPOINT',  
+                json=geometry_payload,
+                headers={'Content-Type': 'application/json'}
+            )
+            
+            if api_response.status_code == 200:
+                biodiversity_data = api_response.json()
+            else:
+                print(f"API call failed with status code: {api_response.status_code}")
+                biodiversity_data = {"error": "Failed to fetch biodiversity data"}
+        
+        except Exception as api_error:
+            print(f"Error calling biodiversity API: {str(api_error)}")
+            biodiversity_data = {"error": str(api_error)}
 
         # Create map centered on the address
         # Convert RD coordinates to WGS84
@@ -138,9 +168,10 @@ def address_map():
             )
         ).add_to(m)
 
-        # Instead of returning m._repr_html_() directly, render the template
-        map_html = m._repr_html_()
-        return render_template('map_view.html', map_html=map_html)
+        # Pass both the map HTML and biodiversity data to the template
+        return render_template('map_view.html', 
+                            map_html=m._repr_html_(), 
+                            biodiversity_data=biodiversity_data)
 
     except Exception as e:
         print(f"Error processing data: {str(e)}")
