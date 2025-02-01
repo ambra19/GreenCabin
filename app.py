@@ -8,30 +8,8 @@ from shapely.geometry import shape, mapping
 from functools import partial
 import json
 
-
-
 app = Flask(__name__)
 
-# # PDOK WFS Endpoint
-# WFS_URL = "https://service.pdok.nl/kadaster/kadastralekaart/wfs/v5_0"
-
-# # Function to fetch cadastral parcels from WFS
-# def get_wfs_data(bbox):
-#     params = {
-#         "service": "WFS",
-#         "version": "2.0.0",
-#         "request": "GetFeature",
-#         "typeNames": "kadastralekaart:perceel",
-#         "bbox": f"{bbox},EPSG:4326",
-#         "outputFormat": "application/json"
-#     }
-
-#     response = requests.get(WFS_URL, params=params)
-    
-#     if response.status_code == 200:
-#         return response.json()
-#     else:
-#         return {"error": f"Failed to fetch data: {response.status_code}"}
 
 @app.route("/input")
 def input():
@@ -143,7 +121,7 @@ def address_map():
             print(f"Failed to parse JSON response: {str(e)}")
             print("Full response:", response.text)
             return "Error processing WFS response", 500
-    
+        
 
         # Before transforming coordinates, send geometry data to your API
         biodiversity_data = {}  # This will store your API response
@@ -151,11 +129,11 @@ def address_map():
             # Prepare the geometry data for your API
             geometry_payload = {
                 'data': {
-                    'geometry': data['features'][0]['geometry']  # This will be the Polygon with coordinates
+                    'geometry': data['features'][0]['geometry']
                 }
             }
 
-            print("Geometry payload sent to API:", json.dumps(geometry_payload, indent=2))
+            # print("Geometry payload sent to API:", json.dumps(geometry_payload, indent=2))
             
             # Make the API call to post the geometry data
             api_response = requests.post(
@@ -166,7 +144,7 @@ def address_map():
             
             if api_response.status_code == 200:
                 biodiversity_data = api_response.json()
-                print(f"Biodiversity data received from API: {biodiversity_data}")
+                # print(f"Biodiversity data received from API: {biodiversity_data}")
             else:
                 print(f"API call failed with status code: {api_response.status_code}")
                 print(f"API response content: {api_response.text}")
@@ -181,9 +159,18 @@ def address_map():
         transformer = pyproj.Transformer.from_crs("EPSG:28992", "EPSG:4326", always_xy=True)
         center_lon, center_lat = transformer.transform(x, y)
         
+        show_biodiversity = request.args.get('show_biodiversity', 'false').lower() == 'true'
+        
         m = folium.Map(location=[center_lat, center_lon], zoom_start=15)
         
-        # Add marker for the address
+        folium.TileLayer(
+            tiles='https://api-titiler-server-395367171754.europe-west4.run.app/cog/tiles/WebMercatorQuad/{z}/{x}/{y}?url=https://storage.googleapis.com/gee-ramiqcom-s4g-bucket/hack4good_biodiversity/lc_nl_raster.tif&bidx=1&rescale=0,10&colormap_name=rdylgn&nodata=-9999',
+            attr='Biodiversity Layer',
+            name='biodiversity_layer',
+            overlay=True,
+            show=show_biodiversity
+        ).add_to(m)
+
         folium.Marker(
             [center_lat, center_lon],
             popup=address,
@@ -221,10 +208,11 @@ def address_map():
             )
         ).add_to(m)
 
-        # Pass both the map HTML and biodiversity data to the template
+        # Return template with necessary variables
         return render_template('map_view.html', 
                             map_html=m._repr_html_(), 
-                            biodiversity_data=biodiversity_data)
+                            biodiversity_data=biodiversity_data,
+                            show_biodiversity=show_biodiversity)
 
     except Exception as e:
         print(f"Error processing data: {str(e)}")
