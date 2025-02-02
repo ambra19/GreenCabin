@@ -1,107 +1,388 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Map View</title>
+    <link href="../static/css/output.css" rel="stylesheet" />
     <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            display: grid;
-            grid-template-columns: 300px 1fr 300px; /* Left sidebar, main content, right sidebar */
-            gap: 20px;
-            height: calc(100vh - 40px); /* Full height minus padding */
-        }
-        .left-sidebar {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-        }
-        .map-container {
-            height: 60%; /* Fixed height for the map */
-            /* border-radius: 5px; */
-            overflow: hidden;
-        }
-        .right-sidebar {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-        }
-        .below-map {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-        }
-        .layer-control {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-            background: white;
-            padding: 10px;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+      /* Center the SVG gauge */
+      #gauge {
+        display: block;
+        margin: 0 auto;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="left-sidebar">
-            <h3>Land Information</h3>
-            <!-- Add your left sidebar content here -->
-            <p>Index of biodiversity: {{ biodiversity_data.score }} / 10</p>
-            <p>Credits: {{ biodiversity_data.credits }}</p>
-            
-            <!-- Add soil information -->
-            {% if biodiversity_data.soil and biodiversity_data.soil[0] %}
-                <div class="mt-4">
-                    <p><strong>Soil Type:</strong> {{ biodiversity_data.soil[0].label }}</p>
-                    <p><strong>Area:</strong> {{ "%.2f"|format(biodiversity_data.soil[0].area) }} m²</p>
-                </div>
-            {% endif %}
+  </head>
+  <body class="px-[88px] bg-[#fdf5e6]">
+    <!-- nav starts here -->
+    <nav class="flex items-center justify-between my-[44px]">
+      <a href="input.html">
+        <img src="../static/assets/GreenCabin.svg" alt="GreenCabin Logo" />
+      </a>
+    </nav>
 
-            <div class="mt-4">
-                <input type="checkbox" 
-                    id="biodiversityToggle" 
-                    {% if show_biodiversity %}checked{% endif %}
-                    class="w-4 h-4 text-green-600 rounded focus:ring-green-500">
-                <label for="biodiversityToggle" 
-                    class="text-gray-700 font-medium select-none">
-                    Show Coverage Layer
-                </label>
-            </div>
-        </div>
+    <!-- Map starts here -->
+    <div class="justify-center flex items-center">
+      <!-- map backend -->
+       <div class="w-[804px]" >
 
-        <div class="main-content">
-            <div class="map-container">
-                {{ map_html|safe }}
-            </div>
-            <div class="below-map">
-                <h3>How to interpret the map?</h3>
-                <p><span style="display: inline-block; width: 20px; height: 20px; background-color: rgb(202, 160, 35); margin-right: 10px; vertical-align: middle;"></span>The orange-ish selected area represents the portion of land registered at the Kadaster for the address.</p>
-                <p>You can zoom in and out using the <span style="display: inline-block; width: 20px; height: 20px; background-color: white; border: 1px solid #ccc; text-align: center; line-height: 20px; margin: 0 3px;">&#43;</span> and <span style="display: inline-block; width: 20px; height: 20px; background-color: white; border: 1px solid #ccc; text-align: center; line-height: 20px; margin: 0 3px;">&minus;</span> buttons on the map, or by using your mouse wheel.</p>
-            </div>
-        </div>
+        <div
+        class="map-container w-[864px] h-[200px] item center justify-center flex border-black border-2 rounded-3xl"
+      >
+        {{ map_html|safe }}
+      </div>
 
-        <div class="right-sidebar">
-            <h3>Right Sidebar</h3>
-            <!-- right sidebar for reccom -->
-            <p>Improvement reccomendations for biodiversity</p>
-        </div>
+       </div>
+      
     </div>
 
+    <div class="justify-center flex items-center mt-2 p-2">
+      <!-- show bio byn -->
+      <div class="layer-control flex items-start w-[1264px]">
+        <div class="gap-2">
+          <input
+            type="checkbox"
+            id="biodiversityToggle"
+            {%
+            if
+            show_biodiversity
+            %}checked{%
+            endif
+            %}
+          />
+          <label for="biodiversityToggle">Show Biodiversity Layer</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- main contnet starts here -->
+    <div class="justify-center items-center flex mt-[50px]">
+      <div class="justify-between items-center flex w-[1264px]">
+        <!-- insights and recommendation div -->
+        <div class="w-[730px] gap-4">
+          <!-- approach 1 -->
+          <div class="">
+            <h2 class="mb-4">Approach 1</h2>
+            <div class="gap-6">
+              <div class="gap-2 flex">
+                <h3 class="items-start w-[150px]">Insight:</h3>
+                <h4 class="w-[585px] items-start mt-16">
+                  Low Pollinator Activity on Your Land
+                </h4>
+              </div>
+              <div class="gap-2 flex">
+                <h3 class="items-start w-[150px]">Observation:</h3>
+                <h4 class="w-[585px] mt-16">
+                  The assessment shows a low presence of bees, butterflies, and
+                  other pollinators, which may be due to a lack of flowering
+                  plants, nesting sites, or pesticide use.
+                </h4>
+              </div>
+              <div class="gap-2 flex">
+                <h3 class="items-start w-[150px]">Observation:</h3>
+
+                <ol class="w-fit text-[20px] list-decimal mt-16">
+                  <li>
+                    Plant Native Wildflowers 🌸 – Choose a mix of local flowers
+                    that bloom in different seasons to attract pollinators
+                    year-round.
+                  </li>
+                  <li>
+                    Reduce Pesticide Use 🚫 – Avoid chemical pesticides and
+                    switch to natural pest management techniques like companion
+                    planting.
+                  </li>
+                  <li>
+                    Provide Nesting Areas 🏡 – Install bee hotels and leave
+                    patches of bare soil for ground-nesting bees
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <!-- approach 2 -->
+          <div class="">
+            <h2 class="mb-4">Approach 2</h2>
+            <div class="gap-6">
+              <div class="gap-2 flex">
+                <h3 class="items-start w-[150px]">Insight:</h3>
+                <h4 class="w-[585px] items-start mt-16">
+                  Low Pollinator Activity on Your Land
+                </h4>
+              </div>
+              <div class="gap-2 flex">
+                <h3 class="items-start w-[150px]">Observation:</h3>
+                <h4 class="w-[585px] mt-16">
+                  The assessment shows a low presence of bees, butterflies, and
+                  other pollinators, which may be due to a lack of flowering
+                  plants, nesting sites, or pesticide use.
+                </h4>
+              </div>
+              <div class="gap-2 flex">
+                <h3 class="items-start w-[150px]">Recommendation:</h3>
+
+                <ol class="w-fit text-[20px] list-decimal mt-16">
+                  <li>
+                    Plant Native Wildflowers 🌸 – Choose a mix of local flowers
+                    that bloom in different seasons to attract pollinators
+                    year-round.
+                  </li>
+                  <li>
+                    Reduce Pesticide Use 🚫 – Avoid chemical pesticides and
+                    switch to natural pest management techniques like companion
+                    planting.
+                  </li>
+                  <li>
+                    Provide Nesting Areas 🏡 – Install bee hotels and leave
+                    patches of bare soil for ground-nesting bees
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- likertscale  div -->
+        <div
+          class="border-[#282828] w-[400px] p-[20px] justify-center items-center flex flex-col rounded-3xl"
+        >
+          <!-- Land Information Section -->
+          <div class="w-full mb-8 text-black">
+            <h3 class="font-bold mb-4 text-black">Land Information</h3>
+            <div class="space-y-2 text-black font-bold">
+              <div class="flex justify-between">
+                <span class="text-black">Index of Biodiversity:</span>
+                <span class="font-extrabold text-black">5.94 / 10</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-black">Credits:</span>
+                <span class="font-extrabold text-black">0.14</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-black">Soil Type:</span>
+                <span class="font-extrabold text-black">River clay soils</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-black">Area:</span>
+                <span class="font-extrabold text-black">1866.24 m²</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- First Scale -->
+          <div class="flex flex-col items-center h-[300px] mb-8">
+            <!-- SVG Gauge 1 -->
+            <svg id="gauge1" width="250" height="200" viewBox="0 0 300 200">
+              <g fill="none" stroke-width="20" stroke-linecap="butt">
+                <path
+                  d="M50 150 A100 100 0 0 1 69.1 91.22"
+                  class="stroke-red-500"
+                />
+                <path
+                  d="M69.1 91.22 A100 100 0 0 1 119.1 54.89"
+                  class="stroke-orange-400"
+                />
+                <path
+                  d="M119.1 54.89 A100 100 0 0 1 180.9 54.89"
+                  class="stroke-yellow-400"
+                />
+                <path
+                  d="M180.9 54.89 A100 100 0 0 1 230.9 91.22"
+                  class="stroke-green-400"
+                />
+                <path
+                  d="M230.9 91.22 A100 100 0 0 1 250 150"
+                  class="stroke-green-500"
+                />
+              </g>
+              <!-- Needle for Gauge 1 -->
+              <line
+                id="needle1"
+                x1="150"
+                y1="150"
+                x2="150"
+                y2="90"
+                stroke="black"
+                stroke-width="4"
+                stroke-linecap="round"
+              />
+              <!-- Center Pivot -->
+              <circle cx="150" cy="150" r="6" fill="black" />
+            </svg>
+            <!-- Value Display for Gauge 1 -->
+            <div id="valueResults1" class="mt-4 px-4 py-2 rounded">
+              Your land got a rating of 3 out of 5 for Nitrogen levels
+            </div>
+          </div>
+
+          <!-- Second Scale -->
+          <div class="flex flex-col items-center h-[300px]">
+            <!-- SVG Gauge 2 -->
+            <svg id="gauge2" width="250" height="200" viewBox="0 0 300 200">
+              <g fill="none" stroke-width="20" stroke-linecap="butt">
+                <path
+                  d="M50 150 A100 100 0 0 1 69.1 91.22"
+                  class="stroke-red-500"
+                />
+                <path
+                  d="M69.1 91.22 A100 100 0 0 1 119.1 54.89"
+                  class="stroke-orange-400"
+                />
+                <path
+                  d="M119.1 54.89 A100 100 0 0 1 180.9 54.89"
+                  class="stroke-yellow-400"
+                />
+                <path
+                  d="M180.9 54.89 A100 100 0 0 1 230.9 91.22"
+                  class="stroke-green-400"
+                />
+                <path
+                  d="M230.9 91.22 A100 100 0 0 1 250 150"
+                  class="stroke-green-500"
+                />
+              </g>
+              <!-- Needle for Gauge 2 -->
+              <line
+                id="needle2"
+                x1="150"
+                y1="150"
+                x2="150"
+                y2="90"
+                stroke="black"
+                stroke-width="4"
+                stroke-linecap="round"
+              />
+              <!-- Center Pivot -->
+              <circle cx="150" cy="150" r="6" fill="black" />
+            </svg>
+            <!-- Value Display for Gauge 2 -->
+            <div id="valueResults2" class="mt-4 px-4 py-2 rounded">
+              Your land got a rating of 3 out of 5 for Productivity
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="justify-center items-center flex mt-[100px]">
+      <h3
+        id="chatbot-trigger"
+        class="cursor-pointer border-b-2 border-black p-2"
+      >
+        Need Help? Ask The Biodiversity Assitant!
+      </h3>
+    </div>
+
+    <!-- dialog starts here -->
+    <dialog
+      id="chatbot-modal"
+      class="w-[500px] max-sm:w-[200px] h-[600px] rounded-2xl"
+    >
+      <div class="p-4 flex flex-col h-full">
+        <!-- header -->
+        <div class="flex justify-between items-center">
+          <h2 class="text-lg font-bold">Biodiversity Assistant</h2>
+          <button id="modal-close" class="text-xl font-bold">&times;</button>
+        </div>
+        <!-- content -->
+        <div class="flex-grow mt-4 h-full">
+          <iframe 
+            src="https://24.199.99.202:8080/"
+            width="100%"
+            height="100%"
+            frameborder="0"
+            class="rounded-lg"
+          ></iframe>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Footer starts here -->
+    <footer class="justify-center items-center flex">
+      <div class="mt-[100px] h-[50px] w-[1264px] items-center">
+        <h4>© 2024 GreenCabin. All rights reserved.</h4>
+      </div>
+    </footer>
+
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const checkbox = document.getElementById('biodiversityToggle');
-        checkbox.addEventListener('change', function() {
-            let url = new URL(window.location.href);
-            url.searchParams.set('show_biodiversity', this.checked);
-            window.location.href = url.toString();
+      document.addEventListener("DOMContentLoaded", function () {
+        const checkbox = document.getElementById("biodiversityToggle");
+        checkbox.addEventListener("change", function () {
+          let url = new URL(window.location.href);
+          url.searchParams.set("show_biodiversity", this.checked);
+          window.location.href = url.toString();
         });
-    });
+      });
+
+      // Mapping for background colors based on rating value.
+      const colorMapping = {
+        1: "bg-red-500",
+        2: "bg-orange-400",
+        3: "bg-yellow-400",
+        4: "bg-green-400",
+        5: "bg-green-500",
+      };
+
+      // Converts a rating (1–5) to an angle (in degrees) for the needle.
+      // The gauge spans 180° (from 180° on the left to 0° on the right), so each segment is 36°.
+      // The midpoint angles for each segment are:
+      //   1: 162°, 2: 126°, 3: 90°, 4: 54°, 5: 18°
+      function valueToAngle(value) {
+        return 180 - ((value - 1) * 36 + 18);
+      }
+
+      // Updates a specific gauge (by number) with the provided rating value.
+      function updateGauge(gaugeNumber, value) {
+        const needle = document.getElementById("needle" + gaugeNumber);
+        const valueDisplay = document.getElementById("valueResults" + gaugeNumber);
+        const angle = valueToAngle(value);
+        const rad = (angle * Math.PI) / 180;
+        const centerX = 150, centerY = 150, radius = 80;
+        const newX = centerX + radius * Math.cos(rad);
+        const newY = centerY - radius * Math.sin(rad);
+
+        // Update the needle's endpoint
+        needle.setAttribute("x2", newX);
+        needle.setAttribute("y2", newY);
+
+        // Update the text display with different labels for each gauge
+        const label = gaugeNumber === 1 ? "Nitrogen levels" : "Productivity";
+        valueDisplay.textContent = `Your land got a rating of ${value} out of 5 for ${label}`;
+
+        // Remove any previous background color classes and add the current one
+        valueDisplay.classList.remove("bg-red-500", "bg-orange-400", "bg-yellow-400", "bg-green-400", "bg-green-500");
+        valueDisplay.classList.add(colorMapping[value]);
+      }
+
+      updateGauge(1, 1); // Updates Gauge 1 with a rating of 3.
+      updateGauge(2, 5); // Updates Gauge 2 with a rating of 3.
+
+      //   modeal sect starts here
+      // Get references to the trigger element, modal, and close button
+      const trigger = document.getElementById("chatbot-trigger");
+      const modal = document.getElementById("chatbot-modal");
+      const closeButton = document.getElementById("modal-close");
+
+      // When the trigger is clicked, show the modal
+      trigger.addEventListener("click", () => {
+        modal.showModal();
+      });
+
+      // When the close button is clicked, close the modal
+      closeButton.addEventListener("click", () => {
+        modal.close();
+      });
+
+      // Optional: Close modal when clicking outside of it
+      modal.addEventListener("click", (event) => {
+        const rect = modal.getBoundingClientRect();
+        if (
+          event.clientX < rect.left ||
+          event.clientX > rect.right ||
+          event.clientY < rect.top ||
+          event.clientY > rect.bottom
+        ) {
+          modal.close();
+        }
+      });
     </script>
-</body>
+  </body>
 </html>
