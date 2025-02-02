@@ -274,22 +274,22 @@
     <!-- dialog starts here -->
     <dialog
       id="chatbot-modal"
-      class="w-[500px] max-sm:w-[200px] h-[600px] rounded-2xl"
+      class="w-[500px] max-sm:w-[300px] h-[400px] rounded-2x border-2 border-red" id="chatApp"
     >
-      <div class="p-4 flex flex-col h-full">
+      <div class="p-4 flex flex-col h-full border-2 border-red">
         <!-- header -->
-        <div class="flex justify-between items-center">
+        <!-- <div class="flex justify-between items-center border-2 border-black">
           <h2 class="text-lg font-bold">Biodiversity Assistant</h2>
           <button id="modal-close" class="text-xl font-bold">&times;</button>
-        </div>
+        </div> -->
         <!-- content -->
-        <div class="flex-grow mt-4 h-full">
+        <div class="flex-grow mt-4 border-2 border-black ">
           <iframe 
             src="https://24.199.99.202:8080/"
-            width="100%"
-            height="100%"
+            width="800px"
+            height="600px"
             frameborder="0"
-            class="rounded-lg"
+            class="chatApp"
           ></iframe>
         </div>
       </div>
@@ -384,5 +384,19 @@
         }
       });
     </script>
+    <style>
+      
+#chatApp {
+    position: fixed;
+    bottom: 20px;  
+    right: 20px;   
+    width: 350px;  
+    height: 500px;  
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    background: transparent;
+    z-index: 1000;  
+}
+    </style>
   </body>
 </html>

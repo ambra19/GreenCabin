@@ -576,6 +576,10 @@ h5 {
   font-size: 18px;
 }
 
+.fixed {
+  position: fixed;
+}
+
 .my-2 {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
@@ -1025,5 +1029,9 @@ h5 {
 
   .max-sm\:w-\[200px\] {
     width: 200px;
+  }
+
+  .max-sm\:w-\[300px\] {
+    width: 300px;
   }
 }
