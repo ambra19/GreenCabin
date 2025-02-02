@@ -50,28 +50,29 @@
 <body>
     <div class="container">
         <div class="left-sidebar">
-            <h3>Left Sidebar</h3>
+            <h3>Land Information</h3>
             <!-- Add your left sidebar content here -->
             <p>Index of biodiversity: {{ biodiversity_data.score }} / 10</p>
             <p>Credits: {{ biodiversity_data.credits }}</p>
-            <p>Key insights of biodiversity in the selected area</p>
-            <!-- Left Sidebar -->
-            <!-- <div class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg p-4"> -->
-                <!-- Layer Control -->
-                <!-- <div class="flex items-center space-x-2 p-3 hover:bg-gray-100 rounded-lg cursor-pointer"> -->
-                    <input type="checkbox" 
-                        id="biodiversityToggle" 
-                        {% if show_biodiversity %}checked{% endif %}
-                        class="w-4 h-4 text-green-600 rounded focus:ring-green-500">
-                    <label for="biodiversityToggle" 
-                        class="text-gray-700 font-medium select-none">
-                        Show Coverage Layer
-                    </label>
-                <!-- </div> -->
-                
-                <!-- You can add more sidebar content here -->
-            <!-- </div> -->
+            
+            <!-- Add soil information -->
+            {% if biodiversity_data.soil and biodiversity_data.soil[0] %}
+                <div class="mt-4">
+                    <p><strong>Soil Type:</strong> {{ biodiversity_data.soil[0].label }}</p>
+                    <p><strong>Area:</strong> {{ "%.2f"|format(biodiversity_data.soil[0].area) }} m²</p>
+                </div>
+            {% endif %}
 
+            <div class="mt-4">
+                <input type="checkbox" 
+                    id="biodiversityToggle" 
+                    {% if show_biodiversity %}checked{% endif %}
+                    class="w-4 h-4 text-green-600 rounded focus:ring-green-500">
+                <label for="biodiversityToggle" 
+                    class="text-gray-700 font-medium select-none">
+                    Show Coverage Layer
+                </label>
+            </div>
         </div>
 
         <div class="main-content">

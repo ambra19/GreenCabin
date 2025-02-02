@@ -144,7 +144,7 @@ def address_map():
             
             if api_response.status_code == 200:
                 biodiversity_data = api_response.json()
-                # print(f"Biodiversity data received from API: {biodiversity_data}")
+                print(f"Biodiversity data received from API: {biodiversity_data}")
             else:
                 print(f"API call failed with status code: {api_response.status_code}")
                 print(f"API response content: {api_response.text}")
@@ -164,7 +164,7 @@ def address_map():
         m = folium.Map(location=[center_lat, center_lon], zoom_start=15)
         
         folium.TileLayer(
-            tiles='https://api-titiler-server-395367171754.europe-west4.run.app/cog/tiles/WebMercatorQuad/{z}/{x}/{y}?url=https://storage.googleapis.com/gee-ramiqcom-s4g-bucket/hack4good_biodiversity/lc_nl_raster.tif&bidx=1&rescale=0,10&colormap_name=rdylgn&nodata=-9999',
+            tiles='https://api-titiler-server-395367171754.europe-west4.run.app/cog/tiles/WebMercatorQuad/{z}/{x}/{y}?url=https://storage.googleapis.com/gee-ramiqcom-s4g-bucket/hack4good_biodiversity/biodiversity_score_v1.tif&bidx=1&rescale=0,10&colormap_name=rdylgn&nodata=-9999',
             attr='Biodiversity Layer',
             name='biodiversity_layer',
             overlay=True,
@@ -220,5 +220,6 @@ def address_map():
 
 # Run Flask app
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(debug=True)
+    # port = int(os.environ.get('PORT', 5000))
+    # app.run(host='0.0.0.0', port=port)
