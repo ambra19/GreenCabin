@@ -14,6 +14,10 @@ app = Flask(__name__,
 )
 
 
+@app.route("/")
+def home():
+    return redirect(url_for('input'))
+
 @app.route("/input")
 def input():
     return render_template("input.html")
@@ -216,5 +220,6 @@ def address_map():
         return f"Error processing data: {str(e)}", 500
 
 # Run Flask app
-if __name__ == "__main__":
-    app.run(debug=True)
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
