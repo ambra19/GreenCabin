@@ -646,10 +646,6 @@ h4 {
   margin-top: 44px;
 }
 
-.ml-64 {
-  margin-left: 16rem;
-}
-
 .flex {
   display: flex;
 }
@@ -668,6 +664,14 @@ h4 {
 
 .h-full {
   height: 100%;
+}
+
+.w-4 {
+  width: 1rem;
+}
+
+.w-64 {
+  width: 16rem;
 }
 
 .w-\[321px\] {
@@ -693,14 +697,6 @@ h4 {
 
 .w-full {
   width: 100%;
-}
-
-.w-4 {
-  width: 1rem;
-}
-
-.w-64 {
-  width: 16rem;
 }
 
 .cursor-pointer {
@@ -838,19 +834,14 @@ h4 {
   color: rgb(93 93 93 / var(--tw-text-opacity, 1));
 }
 
-.text-green-400 {
+.text-gray-700 {
   --tw-text-opacity: 1;
-  color: rgb(74 222 128 / var(--tw-text-opacity, 1));
+  color: rgb(55 65 81 / var(--tw-text-opacity, 1));
 }
 
 .text-green-600 {
   --tw-text-opacity: 1;
   color: rgb(22 163 74 / var(--tw-text-opacity, 1));
-}
-
-.text-gray-700 {
-  --tw-text-opacity: 1;
-  color: rgb(55 65 81 / var(--tw-text-opacity, 1));
 }
 
 .shadow-lg {
@@ -872,4 +863,14 @@ h4 {
 .focus\:ring-green-500:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(34 197 94 / var(--tw-ring-opacity, 1));
+}
+
+@media not all and (min-width: 640px) {
+  .max-sm\:hidden {
+    display: none;
+  }
+
+  .max-sm\:w-\[400px\] {
+    width: 400px;
+  }
 }
