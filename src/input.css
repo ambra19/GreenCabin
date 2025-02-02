@@ -16,4 +16,7 @@
   h4 {
     @apply text-[20px];
   }
+  h5 {
+    @apply text-[18px];
+  }
 }
