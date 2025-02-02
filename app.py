@@ -14,6 +14,10 @@ app = Flask(__name__,
 )
 
 
+@app.route("/")
+def home():
+    return redirect(url_for('input'))
+
 @app.route("/input")
 def input():
     return render_template("input.html")
