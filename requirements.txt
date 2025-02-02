@@ -1,0 +1,3 @@
+Flask
+gunicorn
+# ... (other dependencies will be listed automatically by pip freeze) 
