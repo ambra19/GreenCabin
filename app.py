@@ -36,7 +36,6 @@ def address_map():
         if not address:
             return "Please provide an address", 400
         
-        # First, geocode the address using PDOK Locatieserver
         geocode_url = "https://api.pdok.nl/bzk/locatieserver/search/v3_1/free"
         params = {
             "q": address,
