@@ -1,42 +1,72 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Address Input</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-        }
-        .form-container {
-            text-align: center;
-        }
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            margin: 10px 0;
-        }
-        input[type="submit"] {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-    </style>
-</head>
-<body>
-    <div class="form-container">
-        <h2>Enter Address</h2>
-        <form action="/address_map" method="post">
-            <input type="text" name="address" placeholder="Enter address..." required>
-            <br>
-            <input type="submit" value="Show Map">
-        </form>
+  <head>
+    <title>GreenCabin</title>
+    <link href="../static/css/output.css" rel="stylesheet" />
+    <link rel="icon" href="static/assets/icon.png"/>
+  </head>
+  <body class="px-[88px] bg-[#fdf5e6]">
+    <!-- nav starts here -->
+    <nav class="flex items-center justify-between my-[44px]">
+      <a href="/">
+        <img src="../static/assets/GreenCabin.svg" alt="GreenCabin Logo" />
+      </a>
+    </nav>
+    <!-- hero section starts here -->
+    <div class="justify-center items-center flex">
+      <div class="w-[1264px] justify-between items-center flex">
+        <!-- hero text -->
+        <div class="w-[675px] max-sm:w-[400px]">
+          <h1 class="font-herofont font-bold text-[64px] max-sm:text-[48px]">
+            Discover Your Land's Biodiversity Score
+          </h1>
+          <h4 class="font-secfont text-[24px] mt-[24px]">
+            Enter your address to get insights about your land's biodiversity and recommendations for improvement.
+          </h4>
+        </div>
+        <!-- hero image -->
+        <div class="w-[500px]">
+          <img src="../static/assets/greencabin2.png" alt="Hero Image" />
+        </div>
+      </div>
     </div>
-</body>
+      <!-- Form input for address of the land -->
+      <form
+        action="/map"
+        method="get"
+        class="border-b-2 p-1 pl-2 border-black flex w-[675px] justify-between mt-[50px]"
+      >
+        <input
+          type="text"
+          name="address"
+          class="peer bg-transparent w-[321px] focus:outline-none text-[24px] font-herofont font-bold"
+          placeholder="Enter your address..."
+          required
+        />
+        <!-- submit -->
+        <button type="submit" value="Show Map">
+          <svg
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+      </form>
+
+      <!-- Footer starts here -->
+      <footer class="justify-center items-center flex">
+        <div class="mt-[100px] h-[50px] w-[1264px] items-center">
+          <h4>© 2025 GreenCabin. All rights reserved.</h4>
+        </div>
+      </footer>
+  </body>
 </html>

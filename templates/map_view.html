@@ -1,93 +1,77 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Map View</title>
+    <link href="../static/css/output.css" rel="stylesheet" />
+    <!-- Add Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            display: grid;
-            grid-template-columns: 300px 1fr 300px; /* Left sidebar, main content, right sidebar */
-            gap: 20px;
-            height: calc(100vh - 40px); /* Full height minus padding */
-        }
-        .left-sidebar {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-        }
-        .map-container {
-            height: 60%; /* Fixed height for the map */
-            /* border-radius: 5px; */
-            overflow: hidden;
-        }
-        .right-sidebar {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-        }
-        .below-map {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-        }
-        .layer-control {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-            background: white;
-            padding: 10px;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+      /* Center the SVG gauge */
+      #gauge {
+        display: block;
+        margin: 0 auto;
+      }
+      .map-wrapper {
+        width: 764px;
+        height: 500px;
+        border: 2px solid black;
+        border-radius: 1.5rem;
+        overflow: hidden;
+      }
+      .map-container {
+        width: 100%;
+        height: 100%;
+      }
+      .leaflet-container {
+        width: 100%;
+        height: 100%;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <div class="left-sidebar">
-            <h3>Left Sidebar</h3>
-            <!-- Add your left sidebar content here -->
-            <p>Index of biodiversity: {{ biodiversity_data.score }} / 10</p>
-            <p>Credits: {{ biodiversity_data.credits }}</p>
-            <p>Key insights of biodiversity in the selected area</p>
-        </div>
+  </head>
+  <body class="px-[88px] bg-[#fdf5e6]">
+    <!-- nav starts here -->
+    <nav class="flex items-center justify-between my-[44px]">
+      <a href="input.html">
+        <img src="../static/assets/GreenCabin.svg" alt="GreenCabin Logo" />
+      </a>
+    </nav>
 
-        <div class="main-content">
-            <div class="layer-control">
-                <input type="checkbox" id="biodiversityToggle" {% if show_biodiversity %}checked{% endif %}>
-                <label for="biodiversityToggle">Show Biodiversity Layer</label>
-            </div>
-            <div class="map-container">
-                {{ map_html|safe }}
-            </div>
-            <div class="below-map">
-                <h3>How to interpret the map?</h3>
-                <p><span style="display: inline-block; width: 20px; height: 20px; background-color: rgb(202, 160, 35); margin-right: 10px; vertical-align: middle;"></span>The orange-ish selected area represents the portion of land registered at the Kadaster for the address.</p>
-                <p>You can zoom in and out using the <span style="display: inline-block; width: 20px; height: 20px; background-color: white; border: 1px solid #ccc; text-align: center; line-height: 20px; margin: 0 3px;">&#43;</span> and <span style="display: inline-block; width: 20px; height: 20px; background-color: white; border: 1px solid #ccc; text-align: center; line-height: 20px; margin: 0 3px;">&minus;</span> buttons on the map, or by using your mouse wheel.</p>
-            </div>
+    <!-- Map starts here -->
+    <div class="flex justify-center">
+      <div class="map-wrapper">
+        <div class="map-container">
+          {% if map_html %}
+            {{ map_html | safe }}
+          {% else %}
+            <p>Map doesn't load</p>
+          {% endif %}
         </div>
-
-        <div class="right-sidebar">
-            <h3>Right Sidebar</h3>
-            <!-- right sidebar for reccom -->
-            <p>Improvement reccomendations for biodiversity</p>
-        </div>
+      </div>
     </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const checkbox = document.getElementById('biodiversityToggle');
-        checkbox.addEventListener('change', function() {
-            let url = new URL(window.location.href);
-            url.searchParams.set('show_biodiversity', this.checked);
-            window.location.href = url.toString();
-        });
-    });
-    </script>
-</body>
+    <div class="justify-center flex items-center mt-2 p-2">
+      <!-- show bio byn -->
+      <div class="layer-control flex items-start w-[1264px]">
+        <div class="gap-2">
+          <input
+            type="checkbox"
+            id="biodiversityToggle"
+            {%
+            if
+            show_biodiversity
+            %}checked{%
+            endif
+            %}
+          />
+          <label for="biodiversityToggle">Show Biodiversity Layer</label>
+        </div>
+      </div>
+    </div>
+    <!-- Footer starts here -->
+    <footer class="mt-[44px] mb-[22px] flex items-center justify-center">
+      <div class="text-sm text-gray-600">
+        © 2025 GreenCabin. All rights reserved.
+      </div>
+    </footer>
+  </body>
 </html>

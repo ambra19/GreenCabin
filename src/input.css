@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lora:ital,wght@0,400..700;1,400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
+@layer base {
+  h1 {
+    @apply text-[72px];
+  }
+  h2 {
+    @apply text-[64px];
+  }
+  h3 {
+    @apply text-[24px] text-[#5d5d5d];
+  }
+  h4 {
+    @apply text-[20px];
+  }
+  h5 {
+    @apply text-[18px];
+  }
+}
