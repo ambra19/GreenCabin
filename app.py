@@ -10,15 +10,13 @@ from shapely.geometry import shape, mapping, Point
 from functools import partial
 import json
 
-app = Flask(__name__, 
-    static_url_path='/static',
-    static_folder='static'
-)
+app = Flask(__name__)
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def input():
     if request.method == 'POST':
-        address = request.form.get('address')
+        address = request.form.get('address') 
+
         if not address:
             return "Please provide an address", 400
         return redirect(url_for('address_map', address=address))
@@ -46,6 +44,18 @@ def address_map():
     data = response.json()
     docs = data['response']['docs']
     location = docs[0]
+
+    geocode_info = {
+    'address': location.get('weergavenaam', 'N/A'),
+    'postal_code': location.get('postcode', 'N/A'),
+    'city': location.get('woonplaatsnaam', 'N/A'),
+    'municipality': location.get('gemeentenaam', 'N/A'),
+    'province': location.get('provincienaam', 'N/A'),
+    'coordinates_rd': location.get('centroide_rd', 'N/A'),
+    'coordinates_wgs84': location.get('centroide_ll', 'N/A'),
+    'type': location.get('type', 'N/A'),
+    'confidence_score': location.get('score', 'N/A')
+}
     # get centroid that later is used to get polygon
     centroid = location['centroide_rd']
     x, y = map(float, centroid.replace('POINT(', '').replace(')', '').split())
@@ -83,6 +93,16 @@ def address_map():
         features,
         key=lambda f: shape(f['geometry']).distance(address_point)
     )
+
+    parcel_info = {
+    'parcel_id': closest_feature.get('properties', {}).get('kadastraleaanduiding', 'N/A'),
+    'area_sqm': closest_feature.get('properties', {}).get('oppervlakte', 'N/A'),
+    'land_use': closest_feature.get('properties', {}).get('gebruik', 'N/A'),
+    'status': closest_feature.get('properties', {}).get('status', 'N/A'),
+    'geometry_type': closest_feature.get('geometry', {}).get('type', 'N/A'),
+    'coordinates_count': len(closest_feature.get('geometry', {}).get('coordinates', [])),
+    'bbox': closest_feature.get('bbox', 'N/A')
+}
     
     # Transform geometry to WGS84 for folium
     geom_shape_rd = shape(closest_feature['geometry'])
@@ -96,10 +116,10 @@ def address_map():
     # render the folium map with the selected parcel
     m = folium.Map(
         location=center_coords,
-        zoom_start=15,
+        zoom_start=18,
         width='100%',
         height='100%',
-        tiles=None  # Disable default tiles
+        tiles='OpenStreetMap'  
     )
     
     # Add satellite tile layer
@@ -123,8 +143,16 @@ def address_map():
     ).add_to(m)
     
     map_html = m.get_root().render()
+
+    # Save the map HTML to static/map.html file
+    try:
+        with open('static/map.html', 'w', encoding='utf-8') as f:
+            f.write(map_html)
+        print("Map HTML saved to static/map.html")
+    except Exception as e:
+        print(f"Error saving map HTML: {e}")
     
-    return render_template("map_view.html", map_html=map_html)
+    return render_template("map_view.html", address=address, geocode_info=geocode_info, parcel_info=parcel_info)
 
 # Run Flask app
 if __name__ == '__main__':

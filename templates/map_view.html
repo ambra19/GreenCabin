@@ -1,77 +1,128 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Map View</title>
-    <link href="../static/css/output.css" rel="stylesheet" />
-    <!-- Add Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <style>
-      /* Center the SVG gauge */
-      #gauge {
-        display: block;
-        margin: 0 auto;
-      }
-      .map-wrapper {
-        width: 764px;
-        height: 500px;
-        border: 2px solid black;
-        border-radius: 1.5rem;
-        overflow: hidden;
-      }
-      .map-container {
-        width: 100%;
-        height: 100%;
-      }
-      .leaflet-container {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body class="px-[88px] bg-[#fdf5e6]">
-    <!-- nav starts here -->
-    <nav class="flex items-center justify-between my-[44px]">
-      <a href="input.html">
-        <img src="../static/assets/GreenCabin.svg" alt="GreenCabin Logo" />
-      </a>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenCabin - Land Parcel Map</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+</head>
+<body class="h-full bg-gray-900">
+
+    <!-- ===== NAVIGATION BAR ===== -->
+    <nav class="bg-gray-800/50">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+          <div class="flex items-center">
+            <div class="shrink-0">
+              <a href="/">
+                <img src="{{ url_for('static', filename='assets/GreenCabin.svg') }}" alt="GreenCabin" class="size-32" />
+              </a>
+            </div>
+            <div class="hidden md:block">
+              <div class="ml-10 flex items-baseline space-x-4">
+                <a href="/" class="rounded-md px-3 py-2 text-medium font-medium text-gray-300 hover:bg-white/5 hover:text-white">Home</a>
+                <a href="#" class="rounded-md px-3 py-2 text-medium font-medium text-gray-300 hover:bg-white/5 hover:text-white">About</a>
+              </div>
+            </div>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-4 flex items-center md:ml-6">
+              <a href="/" class="relative rounded-full bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-2 focus:outline-offset-2 focus:outline-green-500">
+                ← Back to Search
+              </a>
+            </div>
+          </div>
+          <div class="-mr-2 flex md:hidden">
+            <button type="button" command="--toggle" commandfor="mobile-menu" class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-green-500">
+              <span class="absolute -inset-0.5"></span>
+              <span class="sr-only">Open main menu</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6 in-aria-expanded:hidden">
+                <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6 not-in-aria-expanded:hidden">
+                <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
     </nav>
 
-    <!-- Map starts here -->
-    <div class="flex justify-center">
-      <div class="map-wrapper">
-        <div class="map-container">
-          {% if map_html %}
-            {{ map_html | safe }}
-          {% else %}
-            <p>Map doesn't load</p>
-          {% endif %}
+    <!-- ===== HEADER SECTION ===== -->
+    <header class="relative bg-gray-800 rounded-xl border-4 border-gray-900">
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold tracking-tight text-white">Land Parcel Analysis</h1>
+            <p class="mt-2 text-gray-300">Address: <span class="font-semibold text-green-400">{{ request.args.get('address', 'No address provided') }}</span></p>
         </div>
-      </div>
-    </div>
+    </header> 
 
-    <div class="justify-center flex items-center mt-2 p-2">
-      <!-- show bio byn -->
-      <div class="layer-control flex items-start w-[1264px]">
-        <div class="gap-2">
-          <input
-            type="checkbox"
-            id="biodiversityToggle"
-            {%
-            if
-            show_biodiversity
-            %}checked{%
-            endif
-            %}
-          />
-          <label for="biodiversityToggle">Show Biodiversity Layer</label>
+    <!-- ===== Left SECTION ===== -->
+    <div class="flex h-[calc(100vh-200px)]">
+        <div class="w-1/2 bg-gray-800 p-6 rounded-xl border-4 border-gray-900">
+            <!-- Address Information -->
+            <div class="mt-2">
+                <h3 class="text-lg font-semibold text-white mb-3">Address Details</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-300">Address:</span>
+                        <span class="text-white">{{ geocode_info.address }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-300">Postal Code:</span>
+                        <span class="text-white">{{ geocode_info.postal_code }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-300">City:</span>
+                        <span class="text-white">{{ geocode_info.city }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-300">Municipality:</span>
+                        <span class="text-white">{{ geocode_info.municipality }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-300">Province:</span>
+                        <span class="text-white">{{ geocode_info.province }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-300">Coordinates:</span>
+                        <span class="text-white">{{ geocode_info.coordinates_wgs84 }}</span>
+                    </div>
+                </div>
+                <h3 class="text-lg font-semibold text-white mb-3 mt-6">Parcel Information</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-300">Parcel ID:</span>
+                        <span class="text-white">{{ parcel_info.parcel_id }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-300">Area:</span>
+                        <span class="text-white">{{ parcel_info.area_sqm }} m²</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-300">Land Use:</span>
+                        <span class="text-white">{{ parcel_info.land_use }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-300">Status:</span>
+                        <span class="text-white">{{ parcel_info.status }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-300">Geometry Type:</span>
+                        <span class="text-white">{{ parcel_info.geometry_type }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+        
+        <!-- ===== Right SECTION ===== -->
+        <div class="w-1/2 bg-gray-800 p-6 rounded-xl border-4 border-gray-900">
+            <iframe
+              src="{{ url_for('static', filename='map.html') }}"
+              class="w-full h-full rounded-lg border-0"
+              loading="lazy">
+            </iframe>
+          </div>
     </div>
-    <!-- Footer starts here -->
-    <footer class="mt-[44px] mb-[22px] flex items-center justify-center">
-      <div class="text-sm text-gray-600">
-        © 2025 GreenCabin. All rights reserved.
-      </div>
-    </footer>
-  </body>
+</body>
 </html>
