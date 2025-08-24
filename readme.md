@@ -2,6 +2,8 @@
 
 A Flask web application that finds and displays land parcels for any Dutch address using geospatial APIs.
 
+![GreenCabin background](static/assets/intro.png)
+![GreenCabin background](static/assets/dashboard.png)
 
 
 ## What it does
